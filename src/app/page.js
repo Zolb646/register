@@ -1,36 +1,39 @@
 "use client";
-import { useState } from "react";
 import "./index.css";
+import { StepOne } from "./_features/StepOne";
+import { StepTwo } from "./_features/Steptwo";
+import { StepThree } from "./_features/StepThree";
+import { useState } from "react";
+import { Stepfour } from "./_features/Stepfour";
 
 export default function Home() {
+  const [step, setStep] = useState(1);
+
+  const handleNextStep = () => {
+    setStep(step + 1);
+  };
+  const handleBackStep = () => {
+    if (step === 1) {
+      return;
+    }
+    setStep(step - 1);
+  };
   return (
-    <div className="container">
-      <div className="con">
-        <div className="header-con">
-          <div className="header">
-            <img src="/Main 1.svg" />
-            <h1>Join Us! 😎</h1>
-            <p>Please provide all current information accurately.</p>
-          </div>
-          <div className="footer">
-            <div className="input-container">
-              <h1>First name *</h1>
-              <input type="text" placeholder="Enter first name..." />
-            </div>
-            <div className="input-container">
-              <h1>Last name *</h1>
-              <input type="text" placeholder="Enter last name..." />
-            </div>
-            <div className="input-container">
-              <h1>Username *</h1>
-              <input type="text" placeholder="Enter username..." />
-            </div>
-          </div>
-        </div>
-        <div className="footer-con">
-          <button>Continue 1/3 &gt;</button>
-        </div>
-      </div>
-    </div>
+    <>
+      {step === 1 && <StepOne handleNextStep={handleNextStep} />}
+      {step === 2 && (
+        <StepTwo
+          handleNextStep={handleNextStep}
+          handleBackStep={handleBackStep}
+        />
+      )}
+      {step === 3 && (
+        <StepThree
+          handleNextStep={handleNextStep}
+          handleBackStep={handleBackStep}
+        />
+      )}
+      {step === 4 && <Stepfour />}
+    </>
   );
 }
