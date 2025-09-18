@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FormInput } from "../_components/form-input";
 
 export const StepOne = (props) => {
@@ -11,7 +11,6 @@ export const StepOne = (props) => {
   const checkIfInputHasSpecialCharacters = (string) => {
     return /[^a-zA-Z0-9]/.test(string);
   };
-
   const [formValidates, setFormValidates] = useState({
     firstName: "",
     lastName: "",
@@ -29,9 +28,9 @@ export const StepOne = (props) => {
   const validateInput = () => {
     const errors = {};
     if (
+      !formValidates.firstName ||
       checkIfInputHasNumbers(formValidates.firstName) ||
-      checkIfInputHasSpecialCharacters(formValidates.firstName) ||
-      !formValidates.lastName
+      checkIfInputHasSpecialCharacters(formValidates.firstName)
     ) {
       errors.firstName = "First name   should have only letters";
     }
@@ -47,6 +46,12 @@ export const StepOne = (props) => {
     }
     return errors;
   };
+  useEffect(() => {
+    const savedData = localStorage.getItem("formValidates");
+    if (savedData) {
+      setFormValidates(JSON.parse(savedData));
+    }
+  }, []);
 
   const handleContinueButton = () => {
     const errors = validateInput();
@@ -54,6 +59,7 @@ export const StepOne = (props) => {
     if (Object.keys(errors).length === 0) {
       setErrorState({});
       handleNextStep();
+      localStorage.setItem("formValidates", JSON.stringify(formValidates));
       console.log(formValidates);
     } else {
       setErrorState(errors);

@@ -149,7 +149,6 @@ input[type="file"] {
 .con1 img {
   width: 70px;
   height: 70px;
-  border-radius: 50%;
   object-fit: cover;
 }
 .con1 h1 {

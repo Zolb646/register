@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FormInput } from "../_components/form-input";
 
 export const StepTwo = (props) => {
@@ -38,12 +38,19 @@ export const StepTwo = (props) => {
 
     return errors;
   };
+  useEffect(() => {
+    const savedData = localStorage.getItem("formValidates");
+    if (savedData) {
+      setFormValidates(JSON.parse(savedData));
+    }
+  }, []);
 
   const handleContinueButton = () => {
     const errors = validateInput();
     setErrorState(errors);
     if (Object.keys(errors).length === 0) {
       setErrorState({});
+      localStorage.setItem("formValidates", JSON.stringify(formValidates));
       handleNextStep();
       console.log(formValidates);
     } else {
@@ -110,7 +117,7 @@ export const StepTwo = (props) => {
               border: "1px solid grey",
             }}
           >
-            &gt; Back
+            &lt; Back
           </button>
           <button onClick={handleContinueButton}>Continue 2/3 &gt;</button>
         </div>

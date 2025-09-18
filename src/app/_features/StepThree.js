@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FormInput } from "../_components/form-input";
 
 export const StepThree = (props) => {
@@ -31,18 +31,40 @@ export const StepThree = (props) => {
     const errors = {};
     if (!formValidates.date) {
       errors.date = "Please provide your date of birth.";
+    } else {
+      const today = new Date();
+      const birthDate = new Date(formValidates.date);
+
+      let age = today.getFullYear() - birthDate.getFullYear(); //9-9=0 && 18-19=-1
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      const dayDiff = today.getDate() - birthDate.getDate();
+
+      if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        age--;
+      }
+
+      if (age < 18) {
+        errors.date = "You must be at least 18 years old.";
+      }
     }
     if (!formValidates.image) {
       errors.image = "Please upload a profile image.";
     }
     return errors;
   };
+  useEffect(() => {
+    const savedData = localStorage.getItem("formValidates");
+    if (savedData) {
+      setFormValidates(JSON.parse(savedData));
+    }
+  }, []);
 
   const handleContinueButton = () => {
     const errors = validateInput();
     setErrorState(errors);
     if (Object.keys(errors).length === 0) {
       setErrorState({});
+      localStorage.setItem("formValidates", JSON.stringify(formValidates));
       handleNextStep();
       console.log(formValidates);
     } else {
@@ -65,7 +87,6 @@ export const StepThree = (props) => {
               name={"date"}
               value={formValidates.date}
               error={errorState.date}
-              placeholder={"--/--/--"}
               type={"date"}
             />
             <div>
@@ -79,7 +100,11 @@ export const StepThree = (props) => {
               <label
                 htmlFor="file-upload"
                 className="image-upload"
-                style={formValidates.image ? { border: "none" } : ""}
+                style={
+                  formValidates.image
+                    ? { border: "none" }
+                    : { border: "2px dashed grey" }
+                }
               >
                 {formValidates.image ? (
                   <img src={formValidates.image} alt="Profile Preview" />
@@ -100,7 +125,6 @@ export const StepThree = (props) => {
                 id="file-upload"
                 type="file"
                 accept="image/*"
-                style={{ display: "none" }}
                 onChange={handleImageChange}
               />
             </div>
@@ -116,7 +140,7 @@ export const StepThree = (props) => {
               border: "1px solid grey",
             }}
           >
-            &gt; Back
+            &lt; Back
           </button>
           <button onClick={handleContinueButton}>Continue 3/3 &gt;</button>
         </div>
