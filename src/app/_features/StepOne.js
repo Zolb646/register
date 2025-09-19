@@ -1,46 +1,39 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FormInput } from "../_components/form-input";
 
-const checkIfInputHasNumbers = (string) => {
-  return /[0-9]/.test(string);
-};
-
-const checkIfInputHasSpecialCharacters = (string) => {
-  return /[^a-zA-Z0-9]/.test(string);
-};
+const checkIfInputHasNumbers = (string) => /[0-9]/.test(string);
+const checkIfInputHasSpecialCharacters = (string) =>
+  /[^a-zA-Z0-9]/.test(string);
 
 const addStepOneValuesToLocalStorage = (values) => {
   if (typeof window !== "undefined") {
-    localStorage.setItem("formValidates", JSON.stringify(values));
+    localStorage.setItem("formValidatesStep1", JSON.stringify(values));
   }
 };
-export const StepOne = (props) => {
-  const { handleNextStep } = props;
 
-  const getStepOneFromLocalStorage = () => {
-    const values = localStorage.getItem("formValidates");
-    if (values) {
-      return JSON.parse(values);
-    } else {
-      return {
-        firstName: "",
-        lastName: "",
-        userName: "",
-      };
-    }
-  };
-
-  const [formValidates, setFormValidates] = useState(
-    getStepOneFromLocalStorage()
-  );
+export const StepOne = ({ handleNextStep }) => {
+  const [formValidates, setFormValidates] = useState({
+    firstName: "",
+    lastName: "",
+    userName: "",
+  });
 
   const [errorState, setErrorState] = useState({});
 
+  // 🔹 localStorage-с утга сэргээх
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("formValidatesStep1");
+      if (saved) {
+        setFormValidates(JSON.parse(saved));
+      }
+    }
+  }, []);
+
   const handleInputChange = (e) => {
-    const inputName = e.target.name;
-    const inputValue = e.target.value;
-    setFormValidates({ ...formValidates, [inputName]: inputValue });
+    const { name, value } = e.target;
+    setFormValidates({ ...formValidates, [name]: value });
   };
 
   const validateInput = () => {
@@ -50,7 +43,7 @@ export const StepOne = (props) => {
       checkIfInputHasNumbers(formValidates.firstName) ||
       checkIfInputHasSpecialCharacters(formValidates.firstName)
     ) {
-      errors.firstName = "First name   should have only letters";
+      errors.firstName = "First name should have only letters";
     }
     if (
       !formValidates.lastName ||
@@ -68,13 +61,11 @@ export const StepOne = (props) => {
   const handleContinueButton = () => {
     const errors = validateInput();
     setErrorState(errors);
+
     if (Object.keys(errors).length === 0) {
-      setErrorState({});
       addStepOneValuesToLocalStorage(formValidates);
       handleNextStep();
       console.log(formValidates);
-    } else {
-      setErrorState(errors);
     }
   };
 
@@ -83,38 +74,37 @@ export const StepOne = (props) => {
       <div className="con">
         <div className="header-con">
           <div className="header">
-            <img src="/Main 1.svg" /> <h1>Join Us! 😎</h1>
+            <img src="/Main 1.svg" alt="logo" />
+            <h1>Join Us! 😎</h1>
             <p>Please provide all current information accurately.</p>
           </div>
           <div className="footer">
             <FormInput
-              inputTag={"First Name"}
+              inputTag="First Name"
               handleChange={handleInputChange}
-              name={"firstName"}
+              name="firstName"
               value={formValidates.firstName}
               error={errorState.firstName}
-              placeholder={"Enter your first name..."}
-              type={"text"}
+              placeholder="Enter your first name..."
+              type="text"
             />
-
             <FormInput
-              inputTag={"Last Name"}
+              inputTag="Last Name"
               handleChange={handleInputChange}
-              name={"lastName"}
+              name="lastName"
               value={formValidates.lastName}
               error={errorState.lastName}
-              placeholder={"Enter your last name..."}
-              type={"text"}
+              placeholder="Enter your last name..."
+              type="text"
             />
-
             <FormInput
-              inputTag={"Username"}
+              inputTag="Username"
               handleChange={handleInputChange}
-              name={"userName"}
+              name="userName"
               value={formValidates.userName}
               error={errorState.userName}
-              placeholder={"Enter your username..."}
-              type={"text"}
+              placeholder="Enter your username..."
+              type="text"
             />
           </div>
         </div>

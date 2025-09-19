@@ -27,11 +27,11 @@ export default function Home() {
   const handleNextStep = () => {
     saveStep(step + 1);
   };
-
   const handleBackStep = () => {
     if (step === 1) return;
     saveStep(step - 1);
   };
+
   const handleReDoStep = () => {
     if (step === 4) {
       saveStep(step - 3);
