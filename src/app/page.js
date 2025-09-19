@@ -3,21 +3,36 @@ import "./index.css";
 import { StepOne } from "./_features/StepOne";
 import { StepTwo } from "./_features/Steptwo";
 import { StepThree } from "./_features/StepThree";
-import { useState } from "react";
 import { Stepfour } from "./_features/Stepfour";
+import { useState } from "react";
 
 export default function Home() {
-  const [step, setStep] = useState(1);
+  const getSavedStep = () => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("currentStep");
+      return saved ? Number(saved) : 1;
+    }
+    return 1;
+  };
+
+  const [step, setStep] = useState(getSavedStep);
+
+  const saveStep = (newStep) => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("currentStep", newStep);
+    }
+    setStep(newStep);
+  };
 
   const handleNextStep = () => {
-    setStep(step + 1);
+    saveStep(step + 1);
   };
+
   const handleBackStep = () => {
-    if (step === 1) {
-      return;
-    }
-    setStep(step - 1);
+    if (step === 1) return;
+    saveStep(step - 1);
   };
+
   return (
     <>
       {step === 1 && <StepOne handleNextStep={handleNextStep} />}

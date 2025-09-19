@@ -2,14 +2,29 @@
 import { useState, useEffect } from "react";
 import { FormInput } from "../_components/form-input";
 
+const addStepOneValuesToLocalStorage = (values) => {
+  localStorage.setItem("formValidates", JSON.stringify(values));
+};
+
 export const StepTwo = (props) => {
   const { handleBackStep, handleNextStep } = props;
-  const [formValidates, setFormValidates] = useState({
-    email: "",
-    phonenumber: "",
-    password: "",
-    confirmpassword: "",
-  });
+
+  const getStepOneFromLocalStorage = () => {
+    const values = localStorage.getItem("formValidates");
+    if (values) {
+      return JSON.parse(values);
+    } else {
+      return {
+        email: "",
+        phonenumber: "",
+        password: "",
+        confirmpassword: "",
+      };
+    }
+  };
+  const [formValidates, setFormValidates] = useState(
+    getStepOneFromLocalStorage()
+  );
   const [errorState, setErrorState] = useState({});
 
   const handleInputChange = (e) => {
@@ -50,7 +65,7 @@ export const StepTwo = (props) => {
     setErrorState(errors);
     if (Object.keys(errors).length === 0) {
       setErrorState({});
-      localStorage.setItem("formValidates", JSON.stringify(formValidates));
+      addStepOneValuesToLocalStorage(formValidates);
       handleNextStep();
       console.log(formValidates);
     } else {

@@ -1,21 +1,41 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FormInput } from "../_components/form-input";
 
+const checkIfInputHasNumbers = (string) => {
+  return /[0-9]/.test(string);
+};
+
+const checkIfInputHasSpecialCharacters = (string) => {
+  return /[^a-zA-Z0-9]/.test(string);
+};
+
+const addStepOneValuesToLocalStorage = (values) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("formValidates", JSON.stringify(values));
+  }
+};
 export const StepOne = (props) => {
   const { handleNextStep } = props;
-  const checkIfInputHasNumbers = (string) => {
-    return /[0-9]/.test(string);
+
+  const getStepOneFromLocalStorage = () => {
+    if (typeof window !== "undefined") {
+      const values = localStorage.getItem("formValidates");
+      if (values) {
+        return JSON.parse(values);
+      }
+    } else {
+      return {
+        firstName: "",
+        lastName: "",
+        userName: "",
+      };
+    }
   };
 
-  const checkIfInputHasSpecialCharacters = (string) => {
-    return /[^a-zA-Z0-9]/.test(string);
-  };
-  const [formValidates, setFormValidates] = useState({
-    firstName: "",
-    lastName: "",
-    userName: "",
-  });
+  const [formValidates, setFormValidates] = useState(
+    getStepOneFromLocalStorage
+  );
 
   const [errorState, setErrorState] = useState({});
 
@@ -46,20 +66,14 @@ export const StepOne = (props) => {
     }
     return errors;
   };
-  useEffect(() => {
-    const savedData = localStorage.getItem("formValidates");
-    if (savedData) {
-      setFormValidates(JSON.parse(savedData));
-    }
-  }, []);
 
   const handleContinueButton = () => {
     const errors = validateInput();
     setErrorState(errors);
     if (Object.keys(errors).length === 0) {
       setErrorState({});
+      addStepOneValuesToLocalStorage(formValidates);
       handleNextStep();
-      localStorage.setItem("formValidates", JSON.stringify(formValidates));
       console.log(formValidates);
     } else {
       setErrorState(errors);

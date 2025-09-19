@@ -1,14 +1,29 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FormInput } from "../_components/form-input";
+
+const addStepOneValuesToLocalStorage = (values) => {
+  localStorage.setItem("formValidates", JSON.stringify(values));
+};
 
 export const StepThree = (props) => {
   const { handleBackStep, handleNextStep } = props;
 
-  const [formValidates, setFormValidates] = useState({
-    date: "",
-    image: null,
-  });
+  const getStepOneFromLocalStorage = () => {
+    const values = localStorage.getItem("formValidates");
+    if (values) {
+      return JSON.parse(values);
+    } else {
+      return {
+        date: "",
+        image: null,
+      };
+    }
+  };
+
+  const [formValidates, setFormValidates] = useState(
+    getStepOneFromLocalStorage()
+  );
 
   const [errorState, setErrorState] = useState({});
 
@@ -52,20 +67,14 @@ export const StepThree = (props) => {
     }
     return errors;
   };
-  useEffect(() => {
-    const savedData = localStorage.getItem("formValidates");
-    if (savedData) {
-      setFormValidates(JSON.parse(savedData));
-    }
-  }, []);
 
   const handleContinueButton = () => {
     const errors = validateInput();
     setErrorState(errors);
     if (Object.keys(errors).length === 0) {
       setErrorState({});
-      localStorage.setItem("formValidates", JSON.stringify(formValidates));
-      handleNextStep();
+      addStepOneValuesToLocalStorage(formValidates);
+      // handleNextStep();
       console.log(formValidates);
     } else {
       setErrorState(errors);
@@ -107,7 +116,26 @@ export const StepThree = (props) => {
                 }
               >
                 {formValidates.image ? (
-                  <img src={formValidates.image} alt="Profile Preview" />
+                  <div className="image-con">
+                    <img
+                      className="con-image"
+                      src={formValidates.image}
+                      alt="Profile Preview"
+                    />
+                    <button
+                      onClick={() =>
+                        setFormValidates({ ...formValidates, image: null })
+                      }
+                    >
+                      <img
+                        style={{
+                          width: "25px",
+                          height: "25px",
+                        }}
+                        src="close.svg"
+                      />
+                    </button>
+                  </div>
                 ) : (
                   <>
                     <span>
