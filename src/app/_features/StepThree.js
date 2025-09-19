@@ -74,7 +74,7 @@ export const StepThree = (props) => {
     if (Object.keys(errors).length === 0) {
       setErrorState({});
       addStepOneValuesToLocalStorage(formValidates);
-      // handleNextStep();
+      handleNextStep();
       console.log(formValidates);
     } else {
       setErrorState(errors);

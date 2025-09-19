@@ -19,11 +19,9 @@ export const StepOne = (props) => {
   const { handleNextStep } = props;
 
   const getStepOneFromLocalStorage = () => {
-    if (typeof window !== "undefined") {
-      const values = localStorage.getItem("formValidates");
-      if (values) {
-        return JSON.parse(values);
-      }
+    const values = localStorage.getItem("formValidates");
+    if (values) {
+      return JSON.parse(values);
     } else {
       return {
         firstName: "",
@@ -34,7 +32,7 @@ export const StepOne = (props) => {
   };
 
   const [formValidates, setFormValidates] = useState(
-    getStepOneFromLocalStorage
+    getStepOneFromLocalStorage()
   );
 
   const [errorState, setErrorState] = useState({});
