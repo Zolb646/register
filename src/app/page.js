@@ -32,6 +32,11 @@ export default function Home() {
     if (step === 1) return;
     saveStep(step - 1);
   };
+  const handleReDoStep = () => {
+    if (step === 4) {
+      saveStep(step - 3);
+    }
+  };
 
   return (
     <>
@@ -48,7 +53,7 @@ export default function Home() {
           handleBackStep={handleBackStep}
         />
       )}
-      {step === 4 && <Stepfour />}
+      {step === 4 && <Stepfour handleReDoStep={handleReDoStep} />}
     </>
   );
 }

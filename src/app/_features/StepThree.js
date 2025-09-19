@@ -35,10 +35,21 @@ export const StepThree = (props) => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormValidates({
-        ...formValidates,
-        image: URL.createObjectURL(file),
-      });
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormValidates({
+          ...formValidates,
+          image: reader.result,
+        });
+        localStorage.setItem(
+          "formValidates",
+          JSON.stringify({
+            ...formValidates,
+            image: reader.result,
+          })
+        );
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -50,7 +61,7 @@ export const StepThree = (props) => {
       const today = new Date();
       const birthDate = new Date(formValidates.date);
 
-      let age = today.getFullYear() - birthDate.getFullYear(); //9-9=0 && 18-19=-1
+      let age = today.getFullYear() - birthDate.getFullYear();
       const monthDiff = today.getMonth() - birthDate.getMonth();
       const dayDiff = today.getDate() - birthDate.getDate();
 
